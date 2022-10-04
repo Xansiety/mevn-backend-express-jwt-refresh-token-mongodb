@@ -1,26 +1,30 @@
 import { request, response } from "express";
+import { GenerarJWT } from "../helpers/generar-jwt.js";
 import { User } from "../models/user.js";
+ 
 
 export const registerAction = async (req = request, res = response) => {
   const { email, password } = req.body;
 
   try {
     let usuario = await User.findOne({ email });
-
     // Custom error
-    if (usuario) {
-      return res.status(400).json({
-        code: 11000,
-        msg: "Usuario ya se encuentra registrado",
-      });
-    } 
+    if (usuario) throw { code: 11000 };
+
     // crear usuario
     usuario = new User({ email, password });
     await usuario.save();
 
-    // Crear JWT para devolverlo 
+    // Crear JWT para devolverlo
+
+    const uid = usuario._id
+    const token = await GenerarJWT(uid);
+
+
     return res.status(201).json({
+      ok: true,
       msg: "Usuario creado correctamente.",
+      token
     });
     // }
   } catch (error) {
@@ -29,22 +33,68 @@ export const registerAction = async (req = request, res = response) => {
     // error por defecto moongoose
     if (error.code === 11000) {
       return res.status(400).json({
-        code: 11000,
+        code: error.code,
         msg: "Usuario ya se encuentra registrado",
       });
     }
-
     return res.status(500).json({
       code: 500,
       msg: "Error de servidor",
     });
-
   }
 };
 
 export const loginAction = async (req = request, res = response) => {
-  res.status(200).json({
-    ok: true,
-    action: "Login",
-  });
+  try {
+    const { email, password } = req.body;
+
+    let usuario = await User.findOne({ email });
+
+
+    if (!usuario) {
+      return res.status(400).json({
+        msg: "Usuario no identificado",
+      })
+    }
+
+     //validar si el usuario esta activo
+     if (!usuario.estado) {
+      return res.status(400).json({
+        msg: "Ups!, tu cuenta no esta activa, por favor contacta con el area correspondiente para la reactivación",
+      })
+    }
+ 
+    if (!usuario.estado) {
+      return res.status(400).json({
+        msg: "Ups!, tu cuenta no esta activa, por favor contacta con el area correspondiente para la reactivación",
+      })
+    } 
+
+    const validPassword = await usuario.comparePassword(password)
+
+    if(!validPassword){
+      return res.status(400).json({
+        msg: "Usuario y/o Password no son correctos",
+      })
+    }
+  
+    const uid = usuario._id
+    const token = await GenerarJWT(uid);
+ 
+    res.status(200).json({
+      ok: true, 
+      token
+    })
+
+    // return res.status(201).json({
+    //   ok: true,
+    //   msg: "Usuario creado correctamente.",
+    // });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      code: 500,
+      msg: "Error de servidor",
+    });
+  }
 };

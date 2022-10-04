@@ -21,11 +21,12 @@ const userSchema = new Schema({
 });
 
 //override -> sobrescribir para solo devolver y omitir propiedades en el retorno
-// usuarioSchema.methods.toJSON = function () {
-//   const { __v, password, _id, ...usuario } = this.toObject()
-//   usuario.uid = _id
-//   return usuario
-// }
+userSchema.methods.toJSON = function () {
+  // const { __v, password, _id, ...usuario } = this.toObject()
+  const { __v, password, ...usuario } = this.toObject()
+  // usuario.uid = _id
+  return usuario
+}
 
 // Antes de guardar en la base de datos
 // Debe ser function f ya que se debe tener al alcance el this
@@ -45,5 +46,15 @@ userSchema.pre("save", async function (next) {
     throw new Error("Fallo el hash de contraseña");
   }
 });
+
+
+// Metodo para comparar contraseñas
+userSchema.methods.comparePassword = async function(candidatePassword)
+{
+  //validar la contraseña
+  return await bcryptjs.compareSync(candidatePassword, this.password) 
+}
+
+
 
 export const User = model("User", userSchema); 
