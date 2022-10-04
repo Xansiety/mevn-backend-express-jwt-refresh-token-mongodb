@@ -20,8 +20,7 @@ authRouter.post(
     ).isLength({ min: 5 }),
     //   check("password", "La contraseña debe ser de minimino 5 caracteres").custom((password) => emailExiste(password)),
     check("rePassword", "Las Contraseñas no coinciden").custom(
-      (value, { req }) => {
-        console.log(value, req.body.password)
+      (value, { req }) => { 
         if(value !== req.body.password){
             throw new Error('No coinciden las contraseñas')
         }

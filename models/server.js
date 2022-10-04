@@ -11,7 +11,7 @@ class Server {
   constructor() {
     this.app = express() //creamos la aplicación de express
     this.port = process.env.PORT || 5000
-    this.usuariosPath = "/api/v1"
+    this.authPath = "/api/v1/auth"
 
     //Conectar a base de datos
     this.ConectarDB()
@@ -40,7 +40,7 @@ class Server {
 
   routes() {
     //rutas separadas
-    this.app.use(this.usuariosPath, authRouter)
+    this.app.use(this.authPath, authRouter)
     
   }
 
