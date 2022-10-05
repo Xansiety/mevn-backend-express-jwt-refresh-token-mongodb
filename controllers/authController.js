@@ -1,7 +1,6 @@
 import { request, response } from "express";
-import { GenerarJWT } from "../helpers/generar-jwt.js";
+import { generateToken } from "../helpers/token-manager.js";
 import { User } from "../models/user.js";
- 
 
 export const registerAction = async (req = request, res = response) => {
   const { email, password } = req.body;
@@ -16,15 +15,14 @@ export const registerAction = async (req = request, res = response) => {
     await usuario.save();
 
     // Crear JWT para devolverlo
-
-    const uid = usuario._id
-    const token = await GenerarJWT(uid);
-
+    const uid = usuario._id;
+    const { token, expiresIn } = await generateToken(uid);
 
     return res.status(201).json({
       ok: true,
       msg: "Usuario creado correctamente.",
-      token
+      token,
+      expiresIn,
     });
     // }
   } catch (error) {
@@ -50,46 +48,42 @@ export const loginAction = async (req = request, res = response) => {
 
     let usuario = await User.findOne({ email });
 
-
     if (!usuario) {
       return res.status(400).json({
         msg: "Usuario no identificado",
-      })
+      });
     }
 
-     //validar si el usuario esta activo
-     if (!usuario.estado) {
-      return res.status(400).json({
-        msg: "Ups!, tu cuenta no esta activa, por favor contacta con el area correspondiente para la reactivación",
-      })
-    }
- 
+    //validar si el usuario esta activo
     if (!usuario.estado) {
       return res.status(400).json({
         msg: "Ups!, tu cuenta no esta activa, por favor contacta con el area correspondiente para la reactivación",
-      })
-    } 
+      });
+    }
 
-    const validPassword = await usuario.comparePassword(password)
+    if (!usuario.estado) {
+      return res.status(400).json({
+        msg: "Ups!, tu cuenta no esta activa, por favor contacta con el area correspondiente para la reactivación",
+      });
+    }
 
-    if(!validPassword){
+    const validPassword = await usuario.comparePassword(password);
+
+    if (!validPassword) {
       return res.status(400).json({
         msg: "Usuario y/o Password no son correctos",
-      })
+      });
     }
-  
-    const uid = usuario._id
-    const token = await GenerarJWT(uid);
- 
-    res.status(200).json({
-      ok: true, 
-      token
-    })
 
-    // return res.status(201).json({
-    //   ok: true,
-    //   msg: "Usuario creado correctamente.",
-    // });
+    // Generar el JWT
+    const uid = usuario._id;
+    const { token, expiresIn } = await generateToken(uid);
+
+    res.status(200).json({
+      ok: true,
+      token,
+      expiresIn,
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({

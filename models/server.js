@@ -4,6 +4,7 @@ import express from "express"
 import cors from "cors"
 import { dbConnection } from "../database/dbConnectionConfig.js"
 import { authRouter } from "../routes/authRouter.js"
+import { testRouter } from "../routes/testRouter.js"
 
 dotenv.config()
 
@@ -12,6 +13,7 @@ class Server {
     this.app = express() //creamos la aplicación de express
     this.port = process.env.PORT || 5000
     this.authPath = "/api/v1/auth"
+    this.testPath = "/api/v1/test"
 
     //Conectar a base de datos
     this.ConectarDB()
@@ -41,6 +43,7 @@ class Server {
   routes() {
     //rutas separadas
     this.app.use(this.authPath, authRouter)
+    this.app.use(this.testPath, testRouter)
     
   }
 
