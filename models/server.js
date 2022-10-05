@@ -5,6 +5,7 @@ import cors from "cors"
 import { dbConnection } from "../database/dbConnectionConfig.js"
 import { authRouter } from "../routes/authRouter.js"
 import { testRouter } from "../routes/testRouter.js"
+import cookieParser from "cookie-parser"
 
 dotenv.config()
 
@@ -35,8 +36,14 @@ class Server {
     //CORS
     this.app.use(cors())
 
+    // Leer las cookies delñ naveagdor
+    this.app.use(cookieParser())
+
     // parseo y lectura del body
     this.app.use(express.json())
+
+    //Servir carpeta publica 
+    this.app.use(express.static("public"))
  
   }
 

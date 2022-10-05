@@ -79,6 +79,12 @@ export const loginAction = async (req = request, res = response) => {
     const uid = usuario._id;
     const { token, expiresIn } = await generateToken(uid);
 
+    // Guardar el token en la cookie del navegador
+    res.cookie("cookieToken", token, {
+      httpOnly: true,
+      secure: process.env.MODO === "developer" ? false : true,
+    });
+
     res.status(200).json({
       ok: true,
       token,

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Route</title>
+</head>
+
+<body>
+    <h1>Ruta Protegida</h1>
+    <div id="app">
+        <h2>Email: <span id="dataapp"></span> </h2>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async e => {
+            try {
+                //leer desde local storage
+                // const token = localStorage.getItem('accessToken') 
+                const resp = await fetch('/api/v1/test/protected', {
+                    method: 'GET',
+                    headers: {
+                        // 'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    credentials: 'include'
+                })
+                console.log(resp.ok, resp.status); 
+                if (resp.ok) {
+                    const data = await resp.json()
+                    console.log("⚡", data.user.email);
+                    const dataapp = document.getElementById("dataapp")
+                    dataapp.textContent = data.user.email;
+                }
+
+            } catch (error) {
+                console.log(error)
+            }
+        })
+    </script>
+</body>
+
+</html>
