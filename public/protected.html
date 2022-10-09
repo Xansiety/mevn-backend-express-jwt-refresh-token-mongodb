@@ -17,17 +17,25 @@
     <script>
         document.addEventListener('DOMContentLoaded', async e => {
             try {
+
+                const resToken = await fetch('/api/v1/auth/refresh', {
+                    method: 'GET',
+                    credentials: 'include' //para incluir las credenciales
+                })
+
+                const { token } = await resToken.json()
+
                 //leer desde local storage
                 // const token = localStorage.getItem('accessToken') 
                 const resp = await fetch('/api/v1/test/protected', {
                     method: 'GET',
                     headers: {
-                        // 'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
                     },
-                    credentials: 'include'
+                    credentials: 'include' //para incluir las credenciales
                 })
-                console.log(resp.ok, resp.status); 
+                console.log(resp.ok, resp.status);
                 if (resp.ok) {
                     const data = await resp.json()
                     console.log("⚡", data.user.email);

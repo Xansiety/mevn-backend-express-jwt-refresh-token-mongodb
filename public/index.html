@@ -21,8 +21,7 @@
         const password = document.getElementById("password")
         form.addEventListener('submit', async e => {
             e.preventDefault()
-            try {
-                console.log(email.value, password.value)
+            try {                
                 const resp = await fetch('/api/v1/auth/login', {
                     method: 'POST',
                     headers: {
@@ -35,14 +34,9 @@
                 })
                 console.log(resp.ok, resp.status);
                 const data = await resp.json()
-                console.log(data)
-
+                console.log(data) 
                 // Save in localStorage
-                // localStorage.setItem("accessToken", data.token)
-                
-                
-
-
+                // localStorage.setItem("accessToken", data.token) 
             } catch (error) {
                 console.log(error)
             }

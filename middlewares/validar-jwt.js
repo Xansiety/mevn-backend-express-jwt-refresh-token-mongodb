@@ -1,16 +1,17 @@
 import { request, response } from "express";
 import jsonwebtoken from "jsonwebtoken";
 import { User } from "../models/user.js";
-
-
-// leer JWT desde cookie
+ 
+// leer jwt desde un header
 export const validarJWT = async (req = request, res = response, next) => {
   try {
     //obtener el JWT desde los headers
-    let token = req.cookies.cookieToken;
-    console.log({token})
+    let token = req.headers?.authorization;
 
-    if (!token) throw new Error("No token"); 
+    if (!token) throw new Error("No Bearer");
+
+    // Separamos el Bearer de nuestro token
+    token = token.split(" ")[1];
 
     //verificar el token
     const { uid } = jsonwebtoken.verify(token, process.env.SECRETORPRIVATEKEY);
@@ -44,7 +45,7 @@ export const validarJWT = async (req = request, res = response, next) => {
     const tokenVerificationErrors = {
       "invalid signature": "La firma del JWT no es valida",
       "jwt expired": "El Token ha expirado",
-      "No token": "Token inexistente",
+      "No Bearer": "Token inexistente, utiliza el schema Bearer",
       "jwt must be provided": "Debes proporcionar un token",
       "jwt malformed": "JWT invalido",
     };
@@ -55,16 +56,16 @@ export const validarJWT = async (req = request, res = response, next) => {
   }
 };
 
-// leer jwt desde un header
-// export const validarJWTRespaldo = async (req = request, res = response, next) => {
+
+
+// // leer JWT desde cookie
+// export const validarJWT = async (req = request, res = response, next) => {
 //   try {
 //     //obtener el JWT desde los headers
-//     let token = req.headers?.authorization;
+//     let token = req.cookies.cookieToken;
+//     console.log({token})
 
-//     if (!token) throw new Error("No Bearer");
-
-//     // Separamos el Bearer de nuestro token
-//     token = token.split(" ")[1];
+//     if (!token) throw new Error("No token"); 
 
 //     //verificar el token
 //     const { uid } = jsonwebtoken.verify(token, process.env.SECRETORPRIVATEKEY);
@@ -98,7 +99,7 @@ export const validarJWT = async (req = request, res = response, next) => {
 //     const tokenVerificationErrors = {
 //       "invalid signature": "La firma del JWT no es valida",
 //       "jwt expired": "El Token ha expirado",
-//       "No Bearer": "Token inexistente, utiliza el schema Bearer",
+//       "No token": "Token inexistente",
 //       "jwt must be provided": "Debes proporcionar un token",
 //       "jwt malformed": "JWT invalido",
 //     };

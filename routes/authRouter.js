@@ -1,10 +1,13 @@
 import { Router } from "express";
 import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
+ 
 
-import { loginAction, registerAction } from "../controllers/authController.js";
+import { loginAction, registerAction , refreshTokenAction} from "../controllers/authController.js";
 
 const authRouter = Router();
+
+
 
 authRouter.post(
   "/register",
@@ -43,6 +46,11 @@ authRouter.post(
   loginAction
 );
 
+
+
+
+//
+authRouter.get("/refresh", refreshTokenAction);
 
 
 export { authRouter };
