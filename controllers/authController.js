@@ -101,33 +101,17 @@ export const loginAction = async (req = request, res = response) => {
 };
 
 export const refreshTokenAction = (req = request, res = response) => {
-  try {
-    const refreshToken = req.cookies.refreshToken;
-    if (!refreshToken) throw new Error("No existe el token");
-
-    const { uid } = jsonwebtoken.verify(
-      refreshToken,
-      process.env.SECRETORPRIVATEKEYREFRESH
-    );
-    const { token, expiresIn } = generateToken(uid);
-
+  try { 
+    const { token, expiresIn } = generateToken(req.uid);
     res.status(200).json({
       ok: true,
       token,
       expiresIn,
     });
   } catch (error) {
-    console.log(error.message);
-    const tokenVerificationErrors = {
-      "invalid signature": "La firma del JWT no es valida",
-      "jwt expired": "El Token ha expirado",
-      "No token": "Token inexistente",
-      "jwt must be provided": "Debes proporcionar un token",
-      "jwt malformed": "JWT invalido",
-    };
-
-    res.status(401).json({
-      error: tokenVerificationErrors[error.message],
+    console.log(error);
+    return res.status(500).json({
+      msg: "Error de servidor",
     });
   }
 };

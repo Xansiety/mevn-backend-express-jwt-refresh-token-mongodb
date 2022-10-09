@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { check } from "express-validator";
 import { validarCampos } from "../middlewares/validar-campos.js";
- 
-
-import { loginAction, registerAction , refreshTokenAction, logoutAction} from "../controllers/authController.js";
+import {
+  loginAction,
+  registerAction,
+  refreshTokenAction,
+  logoutAction,
+} from "../controllers/authController.js";
+import { requireRefreshToken } from "../middlewares/requireRefreshToken.js";
 
 const authRouter = Router();
-
-
 
 authRouter.post(
   "/register",
@@ -45,12 +47,11 @@ authRouter.post(
   ],
   loginAction
 );
- 
+
 // Construir refresh Token
-authRouter.get("/refresh", refreshTokenAction);
+authRouter.get("/refresh", [requireRefreshToken], refreshTokenAction);
 
 // Remover las cookies
 authRouter.get("/logout", logoutAction);
-
 
 export { authRouter };

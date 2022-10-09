@@ -1,9 +1,10 @@
 import { request, response } from "express";
 import jsonwebtoken from "jsonwebtoken";
+import { tokenVerificationErrors } from "../helpers/token-manager.js";
 import { User } from "../models/user.js";
  
 // leer jwt desde un header
-export const validarJWT = async (req = request, res = response, next) => {
+export const validarToken = async (req = request, res = response, next) => {
   try {
     //obtener el JWT desde los headers
     let token = req.headers?.authorization;
@@ -41,15 +42,7 @@ export const validarJWT = async (req = request, res = response, next) => {
     next();
   } catch (error) {
     console.log(error.message);
-
-    const tokenVerificationErrors = {
-      "invalid signature": "La firma del JWT no es valida",
-      "jwt expired": "El Token ha expirado",
-      "No Bearer": "Token inexistente, utiliza el schema Bearer",
-      "jwt must be provided": "Debes proporcionar un token",
-      "jwt malformed": "JWT invalido",
-    };
-
+  
     res.status(401).json({
       error: tokenVerificationErrors[error.message],
     });
