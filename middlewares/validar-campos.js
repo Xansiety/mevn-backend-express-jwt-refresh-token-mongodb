@@ -1,7 +1,7 @@
 import { request, response } from "express"
 import { validationResult } from "express-validator"
 
-export const validarCampos = (req = request, res = response, next) => {
+export const validarCamposExpress = (req = request, res = response, next) => {
   /* Express Validator */
   const errors = validationResult(req)
   if (!errors.isEmpty()) {
