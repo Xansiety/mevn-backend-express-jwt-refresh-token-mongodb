@@ -12,9 +12,22 @@
     <h1>Ruta Protegida</h1>
     <div id="app">
         <h2>Email: <span id="dataapp"></span> </h2>
+        <p><button id="logOut">Cerrar sesion</button></p>
     </div>
 
     <script>
+
+
+        const logOut = document.getElementById("logOut")
+        logOut.addEventListener('click', async () => {
+            const resp = await fetch('/api/v1/auth/logout', {
+                method: 'GET',
+                // credentials: 'include' //para incluir las credenciales
+            })
+
+            console.log(await resp.json());
+        })
+
         document.addEventListener('DOMContentLoaded', async e => {
             try {
 

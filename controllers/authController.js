@@ -117,7 +117,7 @@ export const refreshTokenAction = (req = request, res = response) => {
       expiresIn,
     });
   } catch (error) {
-    console.log(error.message); 
+    console.log(error.message);
     const tokenVerificationErrors = {
       "invalid signature": "La firma del JWT no es valida",
       "jwt expired": "El Token ha expirado",
@@ -130,4 +130,9 @@ export const refreshTokenAction = (req = request, res = response) => {
       error: tokenVerificationErrors[error.message],
     });
   }
+};
+
+export const logoutAction = (req = request, res = response) => {
+  res.clearCookie("refreshToken"); // limpiamos la cookie
+  res.json({ ok: true });
 };
