@@ -1,5 +1,4 @@
 import { request, response } from "express";
-import jsonwebtoken from "jsonwebtoken";
 import {
   generateRefreshToken,
   generateToken,
@@ -21,6 +20,8 @@ export const registerAction = async (req = request, res = response) => {
     // Crear JWT para devolverlo
     const uid = usuario._id;
     const { token, expiresIn } = await generateToken(uid);
+    // Generamos y guardamos el refresh token en una cookie
+    generateRefreshToken(uid, res);
 
     return res.status(201).json({
       ok: true,
@@ -28,7 +29,6 @@ export const registerAction = async (req = request, res = response) => {
       token,
       expiresIn,
     });
-    // }
   } catch (error) {
     console.log(error);
 
@@ -82,7 +82,6 @@ export const loginAction = async (req = request, res = response) => {
     // Generar el JWT
     const uid = usuario._id;
     const { token, expiresIn } = await generateToken(uid);
-
     // Generamos y guardamos el refresh token en una cookie
     generateRefreshToken(uid, res);
 
@@ -101,7 +100,7 @@ export const loginAction = async (req = request, res = response) => {
 };
 
 export const refreshTokenAction = (req = request, res = response) => {
-  try { 
+  try {
     const { token, expiresIn } = generateToken(req.uid);
     res.status(200).json({
       ok: true,

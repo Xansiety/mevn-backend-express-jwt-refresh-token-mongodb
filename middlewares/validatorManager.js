@@ -1,5 +1,6 @@
+import axios from "axios";
 import { request, response } from "express";
-import { check, validationResult } from "express-validator";
+import { check, param, validationResult } from "express-validator";
 
 export const validarCamposExpress = (req = request, res = response, next) => {
   /* Express Validator */
@@ -35,5 +36,37 @@ export const bodyRegisterValidator = [
 export const bodyLoginValidator = [
   check("email", "El correo es obligatorio").isEmail(),
   check("password", "La contraseña es obligatoria").not().isEmpty(),
+  validarCamposExpress,
+];
+
+export const bodyLinkValidator = [
+  check("longLink", "La url es obligatoria").not().isEmpty(),
+  check("longLink", "URL no validad Custom")
+    .trim()
+    .custom(async (value) => {
+      try {
+        if (!value.startsWith("https://")) {
+          value = "https://" + value;
+        }
+        await axios.get(value);
+        return value;
+      } catch (error) {
+        throw new Error("Not Found Link 404");
+      }
+    }),
+  check("longLink", "No es un formato valido").isURL(),
+  validarCamposExpress,
+];
+
+export const bodyLinkIdValidator = [
+  check("id", "No es un ID valido").isMongoId(),
+  validarCamposExpress,
+];
+
+export const paramsLinkValidator = [
+  param("id", "Formato NO valido (Express Validator)")
+    .trim()
+    .notEmpty()
+    .escape(),
   validarCamposExpress,
 ];
