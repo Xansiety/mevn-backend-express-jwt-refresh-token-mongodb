@@ -92,20 +92,45 @@ export const removeLinkByIdAction = async (req = request, res = response) => {
     res.status(201).json({
       linkDB,
     });
-    // const producto = await Producto.findByIdAndUpdate(
-    //     id,
-    //     { estado: false },
-    //     { new: true }
-    //   )
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Error de servidor" });
   }
 };
 
-export const updateLinkAction = (req = request, res = response) => {
-  return res.status(201).json({
-    ok: true,
-    msg: "updateLinkAction",
-  });
+export const patchLinkAction = async (req = request, res = response) => {
+  try {
+    const user = req.usuario;
+    const { id } = req.params;
+    const { longLink } = req.body;
+
+    const linkDB = await Link.findById(id);
+
+    if (!linkDB)
+      return res.status(404).json({
+        msg: `El link solicitado no existe`,
+      });
+
+    // Validar que el recurso pertenezca al usuario
+    if (!linkDB.uid.equals(user._id))
+      return res.status(401).json({
+        msg: `Recurso no encontrado`,
+      });
+
+    // validar link valido
+    if (!longLink.startsWith("https://")) {
+      longLink = "https://" + longLink;
+    }
+
+    linkDB.longLink = longLink;
+    // linkDB = await Link.findByIdAndUpdate(id, { Link }, { new: true });
+    await linkDB.save();
+    
+    res.status(201).json({
+      linkDB,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: "Error de servidor" });
+  }
 };

@@ -3,8 +3,8 @@ import {
   getAllLinksAction,
   getLinkByIdAction,
   createLinkAction,
-  updateLinkAction,
   removeLinkByIdAction,
+  patchLinkAction,
 } from "../controllers/linkController.js";
 import { validarToken } from "../middlewares/requireToken.js";
 import {
@@ -29,16 +29,16 @@ linkRouter.get(
 linkRouter.post("/", [validarToken, bodyLinkValidator], createLinkAction);
 
 // Actualizar un link
-linkRouter.patch("/:id", updateLinkAction);
+linkRouter.patch(
+  "/:id",
+  [validarToken, paramsLinkValidator, bodyLinkIdValidator, bodyLinkValidator],
+  patchLinkAction
+);
 
 // Remover un link
 linkRouter.delete(
   "/:id",
-  [
-    validarToken,
-    paramsLinkValidator,
-    bodyLinkIdValidator,
-  ],
+  [validarToken, paramsLinkValidator, bodyLinkIdValidator],
   removeLinkByIdAction
 );
 export { linkRouter };
