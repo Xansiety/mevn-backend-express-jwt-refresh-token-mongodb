@@ -7,6 +7,7 @@ import { dbConnection } from "../database/dbConnectionConfig.js";
 import { authRouter } from "../routes/authRouter.js";
 import { testRouter } from "../routes/testRouter.js";
 import { linkRouter } from "../routes/linkRouter.js";
+import { redirectRouter } from "../routes/redirectRouter.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ class Server {
     this.authPath = "/api/v1/auth";
     this.testPath = "/api/v1/test";
     this.linkPath = "/api/v1/links";
+    this.redirectPath = "/";
 
     //Conectar a base de datos
     this.ConectarDB();
@@ -52,6 +54,7 @@ class Server {
     this.app.use(this.authPath, authRouter);
     this.app.use(this.testPath, testRouter);
     this.app.use(this.linkPath, linkRouter);
+    this.app.use(this.redirectPath, redirectRouter);
   }
 
   listen() {
