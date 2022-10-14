@@ -59,7 +59,7 @@ class Server {
     this.app.use(express.json());
 
     //Servir carpeta publica
-    this.app.use(express.static("public"));
+    // this.app.use(express.static("public"));
   }
 
   routes() {
