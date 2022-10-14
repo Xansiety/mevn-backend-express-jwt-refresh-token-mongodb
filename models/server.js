@@ -19,6 +19,9 @@ class Server {
     this.testPath = "/api/v1/test";
     this.linkPath = "/api/v1/links";
     this.redirectPath = "/";
+     
+
+    // Originis aceptados por CORS
 
     //Conectar a base de datos
     this.ConectarDB();
@@ -36,10 +39,20 @@ class Server {
   }
 
   Middleware() {
-    //CORS
-    this.app.use(cors());
+    //CORS 
+    const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2];
+    this.app.use(
+      cors({
+        origin: function (origin, callback) {
+          if (whiteList.includes(origin)) {
+            return callback(null, origin);
+          }
+          return callback("Error de CORS: " + origin + " - No autorizado.")
+        },
+      })
+    );
 
-    // Leer las cookies delñ naveagdor
+    // Leer las cookies del naveagdor
     this.app.use(cookieParser());
 
     // parseo y lectura del body
