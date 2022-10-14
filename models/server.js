@@ -41,16 +41,17 @@ class Server {
   Middleware() {
     //CORS 
     const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2];
-    this.app.use(
-      cors({
-        origin: function (origin, callback) {
-          if (whiteList.includes(origin)) {
-            return callback(null, origin);
-          }
-          return callback("Error de CORS: " + origin + " - No autorizado.")
-        },
-      })
-    );
+    this.app.use(cors())
+    // this.app.use(
+    //   cors({
+    //     origin: function (origin, callback) {
+    //       if (whiteList.includes(origin)) {
+    //         return callback(null, origin);
+    //       }
+    //       return callback("Error de CORS: " + origin + " - No autorizado.")
+    //     },
+    //   })
+    // );
 
     // Leer las cookies del naveagdor
     this.app.use(cookieParser());
