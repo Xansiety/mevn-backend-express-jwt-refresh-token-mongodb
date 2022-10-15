@@ -19,7 +19,6 @@ class Server {
     this.testPath = "/api/v1/test";
     this.linkPath = "/api/v1/links";
     this.redirectPath = "/";
-     
 
     // Originis aceptados por CORS
 
@@ -39,18 +38,19 @@ class Server {
   }
 
   Middleware() {
-    //CORS 
+    //CORS
     const whiteList = [process.env.ORIGIN1, process.env.ORIGIN2];
     // this.app.use(cors()) // Habilita el cors para todos
     this.app.use(
       cors({
         origin: function (origin, callback) {
-          console.log('⚡ => ', origin)
+          console.log("⚡ => ", origin);
           if (!origin || whiteList.includes(origin)) {
             return callback(null, origin);
           }
-          return callback("Error de CORS: " + origin + " - No autorizado.")
+          return callback("Error de CORS: " + origin + " - No autorizado.");
         },
+        credentials: true, /*Permitir las credenciales en el navegador*/
       })
     );
 
