@@ -31,16 +31,15 @@ export const generateRefreshToken = (uid, res = response) => {
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.MODO === "developer" ? false : true,
-      expires
+      expires,
+      sameSite: 'none',
     });
 
     return { refreshToken };
-    
   } catch (error) {
     console.log(error);
   }
 };
-
 
 export const tokenVerificationErrors = {
   "invalid signature": "La firma del JWT no es valida",
